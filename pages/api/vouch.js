@@ -16,20 +16,23 @@ export default async function handler(req, res) {
 
   const results = [];
 
+  // Hàm delay 2 giây
+  const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
   for (const userId of userIds) {
     const phrase = phrases[Math.floor(Math.random() * phrases.length)];
 
     const payload = {
-  embeds: [
-    {
-      title: embedOptions?.title || "Vouch Notification",
-      description: `<@${userId}> ${phrase}`,
-      color: embedOptions?.color || 0x00ff00,
-      thumbnail: embedOptions?.thumbnail ? { url: embedOptions.thumbnail } : undefined,
-      timestamp: new Date(),
-    },
-  ],
-};
+      embeds: [
+        {
+          title: embedOptions?.title || "Vouch Notification",
+          description: `<@${userId}> ${phrase}`,
+          color: embedOptions?.color || 0x00ff00,
+          thumbnail: embedOptions?.thumbnail ? { url: embedOptions.thumbnail } : undefined,
+          timestamp: new Date(),
+        },
+      ],
+    };
 
     try {
       const response = await fetch(
@@ -53,6 +56,9 @@ export default async function handler(req, res) {
     } catch (err) {
       results.push({ userId, success: false, error: err.message });
     }
+
+    // Delay 2 giây trước khi gửi user tiếp theo
+    await wait(2000);
   }
 
   res.status(200).json({ results });
