@@ -237,45 +237,52 @@ export default function Home() {
 ];
 
 
-  const startAutoVouch = () => {
-    if (intervalRef.current) return; // tránh chạy nhiều lần
-    const idsArray = userIds.split(",").map(id => id.trim()).filter(Boolean);
-    if (!idsArray.length) return setStatus("Enter at least one User ID.");
+ const startAutoVouch = () => {
+  if (intervalRef.current) return; // tránh chạy nhiều lần
+  const idsArray = userIds.split(",").map(id => id.trim()).filter(Boolean);
+  if (!idsArray.length) return setStatus("Enter at least one User ID.");
 
-    setStatus("Auto Vouch started...");
+  setStatus("Auto Vouch started...");
 
-    let index = 0;
-    intervalRef.current = setInterval(async () => {
-      const userId = idsArray[index];
-      const phrase = phrases[Math.floor(Math.random() * phrases.length)];
+  let index = 0;
 
-      try {
-        const res = await fetch("/api/vouch", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            userId,
-            phrase,
-            embedOptions: {
-              title,
-              color: parseInt(color.replace("#",""),16),
-              thumbnail
-            }
-          })
-        });
-        const data = await res.json();
-        if (data.success) {
-          setStatus(prev => `${prev}\n${userId}: ✅ "${phrase}"`);
-        } else {
-          setStatus(prev => `${prev}\n${userId}: ❌ ${data.error}`);
-        }
-      } catch (err) {
-        setStatus(prev => `${prev}\n${userId}: ❌ ${err.message}`);
+  const sendNext = async () => {
+    const userId = idsArray[index];
+    const phrase = phrases[Math.floor(Math.random() * phrases.length)];
+
+    try {
+      const res = await fetch("/api/vouch", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId,
+          phrase,
+          embedOptions: {
+            title,
+            color: parseInt(color.replace("#",""),16),
+            thumbnail
+          }
+        })
+      });
+      const data = await res.json();
+      if (data.success) {
+        setStatus(prev => `${prev}\n${userId}: ✅ "${phrase}"`);
+      } else {
+        setStatus(prev => `${prev}\n${userId}: ❌ ${data.error}`);
       }
+    } catch (err) {
+      setStatus(prev => `${prev}\n${userId}: ❌ ${err.message}`);
+    }
 
-      index = (index + 1) % idsArray.length;
-    }, 2000); // mỗi 2 giây gửi 1 user
+    index = (index + 1) % idsArray.length;
+
+    // random 5-6 phút
+    const delay = Math.floor(Math.random() * (360000 - 300000 + 1)) + 300000;
+    intervalRef.current = setTimeout(sendNext, delay);
   };
+
+  sendNext();
+};
 
   const stopAutoVouch = () => {
     clearInterval(intervalRef.current);
