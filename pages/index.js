@@ -287,7 +287,7 @@ export default function Home() {
   const stopAutoVouch = () => {
     clearInterval(intervalRef.current);
     intervalRef.current = null;
-    setStatus(prev => prev + "\nAuto Vouch stopped23.");
+    setStatus(prev => prev + "\nAuto Vouch stopped213.");
   };
 
   return (
