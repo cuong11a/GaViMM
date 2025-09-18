@@ -20,16 +20,16 @@ export default async function handler(req, res) {
     const phrase = phrases[Math.floor(Math.random() * phrases.length)];
 
     const payload = {
-      embeds: [
-        {
-          title: embedOptions?.title || "Vouch Notification",
-          description: `<@${userId}> ${phrase}`,
-          color: embedOptions?.color || 0x00ff00,
-          thumbnail: embedOptions?.thumbnail,
-          timestamp: new Date(),
-        },
-      ],
-    };
+  embeds: [
+    {
+      title: embedOptions?.title || "Vouch Notification",
+      description: `<@${userId}> ${phrase}`,
+      color: embedOptions?.color || 0x00ff00,
+      thumbnail: embedOptions?.thumbnail ? { url: embedOptions.thumbnail } : undefined,
+      timestamp: new Date(),
+    },
+  ],
+};
 
     try {
       const response = await fetch(
