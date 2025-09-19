@@ -276,9 +276,9 @@ export default function Home() {
 
     index = (index + 1) % idsArray.length;
 
-    // random 5-6 phút
-    const delay = Math.floor(Math.random() * (360000 - 300000 + 1)) + 300000;
-    intervalRef.current = setTimeout(sendNext, delay);
+    // random 2 - 2.5 phút
+const delay = Math.floor(Math.random() * (150000 - 120000 + 1)) + 120000;
+intervalRef.current = setTimeout(sendNext, delay);
   };
 
   sendNext();
